@@ -14,16 +14,16 @@ walk <- function(pathToWalk, startingX, startingY) {
     steps <- as.numeric(sub('.([0-9]+)','\\1',pathToWalk))
     if (steps == 0) stop('hit a zero.')
     if (direction == U) {
-        range <- seq((startingY + 1):(startingY+steps))
+        range <- (startingY + 1):(startingY+steps)
     }
     if (direction == R) {
-        range <- seq((startingX + 1):(startingX+steps))
+        range <- (startingX + 1):(startingX+steps)
     }
     if (direction == D) {
-        range <- seq((startingY + 1):(startingY-steps))
+        range <- (startingY + 1):(startingY-steps)
     }
     if (direction == L) {
-        range <- seq((startingX + 1):(startingX-steps))
+        range <- (startingX + 1):(startingX-steps)
     }
     
     if (direction == U || direction == D) {
