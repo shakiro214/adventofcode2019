@@ -7,24 +7,29 @@ path2 <- scan(text=input$V1[2], what="character", sep=",")
 
 create_entry <- function (x, y) sprintf("x%sy%s",x,y)
 
-# NOT DONE YET!  WORK IN PROGRESS...
+contains_entry <- function (df, entry) c(entry) %in% df$xy
+
+parse_x <- function(entry) as.numeric(sub('x(-?[0-9]+)y(-?[0-9]+)','\\1', entry))
+
+parse_y <- function(entry) as.numeric(sub('x(-?[0-9]+)y(-?[0-9]+)','\\2', entry))
+
+sum_of_absolutes <- function(x) abs(parse_x(x)) + abs(parse_y(x))
+
 take_steps <- function(dataFrame, isHorizontal, otherValue, start, end) {
-    ## add row if not found in data frame
     range <- start:end
     for (value in range) {
         xy <- ifelse(isHorizontal, 
                         create_entry(value, otherValue),
                         create_entry(otherValue, value))
-        if (!c(xy) %in% dataFrame$xy) {
-            dataFrame <- dataFrame %>% add_row(xy)
-        }
+        dataFrame <- dataFrame %>% add_row(xy)
     }
-    return (dataFrame)
+    dataFrame
 }
 
 walk <- function(dataFrame, pathToWalk, startingX, startingY) {
     direction <- substr(pathToWalk,1,1)
     steps <- as.numeric(sub('.([0-9]+)','\\1',pathToWalk))
+
     range <- 0:0
     if (steps == 0) stop('hit a zero.')
     if (direction == "U") {
@@ -36,26 +41,50 @@ walk <- function(dataFrame, pathToWalk, startingX, startingY) {
         end <- startingX+steps
     }
     if (direction == "D") {
-        start <- startingY + 1
+        start <- startingY - 1
         end <- startingY-steps
     }
     if (direction == "L") {
-        start <- startingX + 1
+        start <- startingX - 1
         end <- startingX-steps
     }
     
     ifelse(direction == "U" | direction == "D", 
-        return (take_steps(dataFrame, F, startingX, start, end)),
-        return (take_steps(dataFrame, T, startingY, start, end)))
+        dataFrame <- take_steps(dataFrame, F, startingX, start, end),
+        dataFrame <- take_steps(dataFrame, T, startingY, start, end))
+    dataFrame
 }
 
+move_direction <- function(df, direction) {
+    last_entry <- df$xy[length(df$xy)]
+    lastX <- parse_x(last_entry)
+    lastY <- parse_y(last_entry)
+    df <- walk(df, direction, lastX, lastY)
+    df
+}
 
-df<-data.frame(xy = create_entry(-10,3))
-last_entry <- df$xy[length(df$xy)]
-path <- "R30"
+move <- function(path) {
+    df<-data.frame(xy = create_entry(0,0))
+    for (direction in path) {
+        df <- move_direction(df, direction)
+    }
+    df
+}
 
-lastX <- as.numeric(sub('.(-?[0-9]+).(-?[0-9]+)','\\1', last_entry))
-lastY <- as.numeric(sub('.(-?[0-9]+).(-?[0-9]+)','\\2', last_entry))
+find_intersections <- function(a, b) {
+    pristine_a <- filter(a, xy!="x0y0")
+    pristine_b <- filter(b, xy!="x0y0")
+    pristine_a$xy[pristine_a$xy %in% pristine_b$xy]
+}
 
-walk(df, path, lastX, lastY)
+a <- move(path1)
+b <- move(path2)
 
+intersections <- find_intersections(a, b)
+intersections
+
+intersections %>% purrr::reduce(function(x, y) {
+   sumX <- sum_of_absolutes(x)
+   sumY <- sum_of_absolutes(y)
+   ifelse(sumX < sumY, x, y)
+}) %>% sum_of_absolutes
