@@ -50,12 +50,12 @@ walk <- function(dataFrame, pathToWalk, startingX, startingY) {
 }
 
 
-df<-data.frame(xy = create_entry(0,0))
+df<-data.frame(xy = create_entry(-10,3))
 last_entry <- df$xy[length(df$xy)]
-path <- "D30"
+path <- "R30"
 
-lastX <- as.numeric(sub('.([0-9]).([0-9])','\\1', last_entry))
-lastY <- as.numeric(sub('.([0-9]).([0-9])','\\2', last_entry))
+lastX <- as.numeric(sub('.(-?[0-9]+).(-?[0-9]+)','\\1', last_entry))
+lastY <- as.numeric(sub('.(-?[0-9]+).(-?[0-9]+)','\\2', last_entry))
 
 walk(df, path, lastX, lastY)
 
