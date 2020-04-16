@@ -11,4 +11,4 @@ calculateFuel <- function(x, total = 0) {
     }, return (total))
 }
 
-sum( purrr::map_dbl(input$V1, calculateFuel) )
+sum( map_dbl(input$V1, calculateFuel) )
