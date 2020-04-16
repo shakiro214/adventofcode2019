@@ -2,10 +2,17 @@ library(dplyr)
 
 source('helpers/passwordFinder.R')
 
+secondIndex <- 2
+fifthIndex <- 5
+
+# function to find twin sibling numbers that don't turn into triplets
 filterGroupedNums <- function(num) {
+    # grabs each digit in the num and assigns it to an index in a vector
     this_num <- as.integer(strsplit(as.character(as.integer(num)), "")[[1]])
     contains_a_twin <- F
-    for (i in 2:5) {
+
+    # loop thru middle indexes, so that we can reference last and next digits
+    for (i in secondIndex:fifthIndex) {
         last_digit <- this_num[i-1]
         this_digit <- this_num[i]
         next_digit <- this_num[i+1]

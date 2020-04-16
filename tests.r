@@ -1,4 +1,7 @@
-csv  <- read.table('inputs/day4.txt')
-csvString <- sprintf("%s", csv$V1)
-input <- scan(text=csvString,, sep="-")
-input
+library(dplyr)
+library(purrr)
+
+cav <- as.integer(strsplit(as.character(as.integer(123456)), "")[[1]])
+cav %>% reduce(function(x, y, i, arr) {
+        append(x, arr)
+    })

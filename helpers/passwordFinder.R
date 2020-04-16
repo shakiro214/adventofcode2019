@@ -1,31 +1,27 @@
+library(purrr)
 csv  <- read.table('inputs/day4.txt')
 csvString <- sprintf("%s", csv$V1)
 input <- scan(text=csvString,, sep="-")
 
 current <- input[1]
 last <- input[2]
+secondIndex <- 2
+lastIndex <- 6
 
 cleanse_vector <- function(cav) {
     cav <- as.integer(strsplit(as.character(as.integer(cav)), "")[[1]])
     unclean <- F
-    if (all(cav[c(2:6)] == 9)) {
+    if (all(cav[c(secondIndex:lastIndex)] == 9)) {
+        cav <- cav %>% imap(function(digit, index) {
+                    ifelse(index == 1, digit + 1, 0)
+                }) %>% unlist
+    } else if (all(cav[c(secondIndex:lastIndex)] == 0)) {
         first_digit <- cav[1]
-        cav[1] = first_digit + 1
-        cav[2] = 0
-        cav[3] = 0
-        cav[4] = 0
-        cav[5] = 0
-        cav[6] = 0
-    } else if (all(cav[c(2:6)] == 0)) {
-        first_digit <- cav[1]
-        cav[1] = first_digit
-        cav[2] = first_digit
-        cav[3] = first_digit
-        cav[4] = first_digit
-        cav[5] = first_digit
-        cav[6] = first_digit
+        cav <- cav %>% imap(function(digit, index) {
+                    first_digit
+                }) %>% unlist
     } else {
-        for (i in 2:length(cav)) {
+        for (i in secondIndex:lastIndex) {
             prev_digit <- cav[i-1]
             curr_digit <- cav[i]
             if (unclean) {
@@ -40,7 +36,7 @@ cleanse_vector <- function(cav) {
 
     cav <- as.integer(strsplit(as.character(as.integer(increasing_number)), "")[[1]])
     matched_sibling <- F
-    for (i in 2:length(cav)) {
+    for (i in secondIndex:lastIndex) {
         last_digit <- cav[i-1]
         this_digit <- cav[i]
         if (last_digit == this_digit) {

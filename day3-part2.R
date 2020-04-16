@@ -1,4 +1,5 @@
 library(dplyr)
+library(purrr)
 source('helpers/wireWalker.R')
 
 input  <- read.table('inputs/day3.txt', header=F, stringsAsFactors = F);
@@ -19,7 +20,7 @@ b <- move(path2)
 intersections <- find_intersections(a, b)
 intersections
 
-intersections %>% purrr::reduce(function(x, y) {
+intersections %>% reduce(function(x, y) {
    sumX <- sum_of_steps(x, a, b)
    sumY <- sum_of_steps(y, a, b)
    ifelse(sumX < sumY, x, y)
