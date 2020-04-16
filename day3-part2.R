@@ -10,8 +10,6 @@ create_entry <- function (x, y) sprintf("x%sy%s",x,y)
 parse_x <- function(entry) as.numeric(sub('x(-?[0-9]+)y(-?[0-9]+)','\\1', entry))
 parse_y <- function(entry) as.numeric(sub('x(-?[0-9]+)y(-?[0-9]+)','\\2', entry))
 
-sum_of_absolutes <- function(x) abs(parse_x(x)) + abs(parse_y(x))
-
 take_steps <- function(dataFrame, isHorizontal, otherValue, start, end) {
     range <- start:end
     for (value in range) {
@@ -21,6 +19,12 @@ take_steps <- function(dataFrame, isHorizontal, otherValue, start, end) {
         dataFrame <- dataFrame %>% add_row(xy)
     }
     dataFrame
+}
+
+sum_of_steps <- function(x, a, b) {
+    a_steps = match(x, a$xy) - 1
+    b_steps = match(x, b$xy) - 1
+    a_steps + b_steps
 }
 
 walk <- function(dataFrame, pathToWalk, startingX, startingY) {
@@ -81,7 +85,7 @@ intersections <- find_intersections(a, b)
 intersections
 
 intersections %>% purrr::reduce(function(x, y) {
-   sumX <- sum_of_absolutes(x)
-   sumY <- sum_of_absolutes(y)
+   sumX <- sum_of_steps(x, a, b)
+   sumY <- sum_of_steps(y, a, b)
    ifelse(sumX < sumY, x, y)
-}) %>% sum_of_absolutes
+}) %>% sum_of_steps(a, b)
